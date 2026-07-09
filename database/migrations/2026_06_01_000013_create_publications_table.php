@@ -52,7 +52,7 @@ return new class extends Migration
             // NULL is excluded from the UNIQUE index automatically.
             $table->string('doi_active_key', 255)
                 ->nullable()
-                ->storedAs('IF(deleted_at IS NULL AND doi IS NOT NULL, doi, NULL)');
+                ->storedAs('CASE WHEN deleted_at IS NULL AND doi IS NOT NULL THEN doi ELSE NULL END');
         });
 
         Schema::table('publications', function (Blueprint $table): void {

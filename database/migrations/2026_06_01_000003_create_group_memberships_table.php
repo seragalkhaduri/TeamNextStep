@@ -53,10 +53,12 @@ return new class extends Migration
         // CHECK constraint (SDD §4.5.2) — Laravel's fluent Schema Builder
         // has no cross-driver check() helper; added via raw DDL for
         // explicit, portable enforcement at the database level.
-        DB::statement(
-            'ALTER TABLE group_memberships '
-            . 'ADD CONSTRAINT chk_gm_workload CHECK (workload_percentage BETWEEN 1 AND 100)'
-        );
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(
+                'ALTER TABLE group_memberships '
+                . 'ADD CONSTRAINT chk_gm_workload CHECK (workload_percentage BETWEEN 1 AND 100)'
+            );
+        }
     }
 
     /**

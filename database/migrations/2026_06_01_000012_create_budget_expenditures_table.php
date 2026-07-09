@@ -58,10 +58,11 @@ return new class extends Migration
             $table->index('category', 'idx_be_category');
         });
 
-        // CHECK constraint (SDD §4.5.2): zero-amount entries are meaningless.
-        DB::statement(
-            'ALTER TABLE budget_expenditures ADD CONSTRAINT chk_be_amount CHECK (amount <> 0)'
-        );
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(
+                'ALTER TABLE budget_expenditures ADD CONSTRAINT chk_be_amount CHECK (amount <> 0)'
+            );
+        }
     }
 
     /**

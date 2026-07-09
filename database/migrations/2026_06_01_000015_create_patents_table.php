@@ -43,7 +43,7 @@ return new class extends Migration
             // NULL"). Stored generated column reproduces the same effect.
             $table->string('patent_number_active_key', 100)
                 ->nullable()
-                ->storedAs('IF(deleted_at IS NULL AND patent_number IS NOT NULL, patent_number, NULL)');
+                ->storedAs('CASE WHEN deleted_at IS NULL AND patent_number IS NOT NULL THEN patent_number ELSE NULL END');
         });
 
         Schema::table('patents', function (Blueprint $table): void {

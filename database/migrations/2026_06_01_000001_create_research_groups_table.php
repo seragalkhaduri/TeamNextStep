@@ -51,7 +51,7 @@ return new class extends Migration
             // constraint "group_name unique among active records".
             $table->string('group_name_active_key', 255)
                 ->nullable()
-                ->storedAs('IF(deleted_at IS NULL, group_name, NULL)');
+                ->storedAs('CASE WHEN deleted_at IS NULL THEN group_name ELSE NULL END');
         });
 
         Schema::table('research_groups', function (Blueprint $table): void {

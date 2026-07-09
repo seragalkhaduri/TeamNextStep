@@ -48,11 +48,12 @@ return new class extends Migration
             $table->index('requester_uimp_id', 'idx_ea_requester');
         });
 
-        // CHECK constraint (SDD §4.5.2).
-        DB::statement(
-            'ALTER TABLE equipment_assignments '
-            . 'ADD CONSTRAINT chk_ea_dates CHECK (end_datetime > start_datetime)'
-        );
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(
+                'ALTER TABLE equipment_assignments '
+                . 'ADD CONSTRAINT chk_ea_dates CHECK (end_datetime > start_datetime)'
+            );
+        }
     }
 
     /**
