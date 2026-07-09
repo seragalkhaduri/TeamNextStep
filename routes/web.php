@@ -746,4 +746,46 @@ Route::middleware('auth')->group(function () {
                 ->withErrors(['error' => $e->getMessage()]);
         }
     });
+
+    // ── Users Role Management (SYSTEM_ADMIN & UNIVERSITY_ADMIN only) ──
+    Route::post('/users/{id}/role', function (Request $request, string $id) {
+        if (!Auth::user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN'])) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'role' => ['required', 'string', 'in:SYSTEM_ADMIN,UNIVERSITY_ADMIN,REGISTRAR,HR_STAFF,AUDITOR,STUDENT,FACULTY'],
+        ]);
+
+        $user = \App\Domain\Auth\Models\User::findOrFail($id);
+        $oldRoles = $user->roles->pluck('name')->toArray();
+
+        try {
+            // Sync Roles
+            $user->syncRoles([$request->role]);
+
+            // Log Compliance Audit Trail
+            \App\Domain\Audit\Models\AuditLog::create([
+                'id' => (string) Str::uuid(),
+                'event_type' => 'SECURITY',
+                'entity_type' => 'User',
+                'entity_id' => $user->id,
+                'action' => 'UPDATE',
+                'actor_user_id' => Auth::id(),
+                'old_value' => ['roles' => $oldRoles],
+                'new_value' => ['roles' => [$request->role]],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return redirect()->back()
+                ->with('active_section', 'users-management')
+                ->with('success', 'User role updated successfully (and compliance audit logged!)');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('active_section', 'users-management')
+                ->withErrors(['error' => $e->getMessage()]);
+        }
+    });
 });
+

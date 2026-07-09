@@ -28,6 +28,10 @@
     $employees = \App\Domain\Employees\Models\Employee::with('departments')->get();
     $faculties = \App\Domain\Organization\Models\Faculty::with('departments.programs')->get();
     $campuses  = \App\Domain\Facilities\Models\Campus::with('buildings.rooms')->get();
+    $allUsers = collect();
+    if (auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN'])) {
+        $allUsers = \App\Domain\Auth\Models\User::with('roles')->get();
+    }
 
     try {
         $researchGroups = \App\Domain\ResearchGroups\Models\ResearchGroup::with('groupMemberships')->get();
@@ -608,6 +612,12 @@
         @if(auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'AUDITOR']))
         <button class="nav-item" id="nav-item-audit-logs" onclick="showSection('audit-logs', this)">
             <span class="icon">📋</span> {{ $t('Audit Logs', 'سجلات التدقيق') }}
+        </button>
+        @endif
+        @if(auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN']))
+        <button class="nav-item" id="nav-item-users-management" onclick="showSection('users-management', this)">
+            <span class="icon">🔑</span> {{ $t('Users Manager', 'إدارة الصلاحيات') }}
+            <span class="nav-badge" style="background:var(--accent-gradient);">{{ $allUsers->count() }}</span>
         </button>
         @endif
         <button class="nav-item" id="nav-item-api-docs" onclick="showSection('api-docs', this)">
@@ -1746,6 +1756,74 @@
             @endif
         </div>
 
+        <!-- ══ USERS MANAGEMENT ══ -->
+        @if(auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN']))
+        <div id="section-users-management" class="page-section">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">🔑 {{ $t('Users & Roles Management', 'إدارة المستخدمين وصلاحيات الدخول') }}</div>
+                        <div class="card-subtitle">{{ $t('Assign and update user system privileges dynamically with compliance audit trailing', 'تعديل وتحديث صلاحيات المستخدمين والأدوار الأمنية في المنظومة فورياً مع التوثيق الكامل للحركات') }}</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>{{ $t('User ID (UUID)', 'معرف المستخدم الفريد') }}</th>
+                                <th>{{ $t('Username', 'اسم المستخدم') }}</th>
+                                <th>{{ $t('Current Role / Rank', 'الصلاحية / الرتبة الحالية') }}</th>
+                                <th>{{ $t('Change Role', 'تعديل وتغيير الصلاحية') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($allUsers as $usr)
+                            <tr>
+                                <td><span class="mono" style="font-size: 0.75rem;">{{ $usr->id }}</span></td>
+                                <td style="font-weight:700; color:var(--accent);">👤 {{ $usr->username }}</td>
+                                <td>
+                                    @php
+                                        $role = $usr->roles->first()?->name ?? 'None';
+                                        $badgeClass = 'badge-gray';
+                                        if ($role === 'SYSTEM_ADMIN') $badgeClass = 'badge-rose';
+                                        elseif ($role === 'UNIVERSITY_ADMIN') $badgeClass = 'badge-purple';
+                                        elseif (in_array($role, ['REGISTRAR', 'HR_STAFF'])) $badgeClass = 'badge-blue';
+                                        elseif ($role === 'AUDITOR') $badgeClass = 'badge-amber';
+                                        elseif ($role === 'FACULTY') $badgeClass = 'badge-indigo';
+                                        elseif ($role === 'STUDENT') $badgeClass = 'badge-green';
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }}" style="font-size:0.8rem; padding: 4px 10px;">
+                                        {{ $role }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form action="/users/{{ $usr->id }}/role" method="POST" style="display:flex; gap:0.5rem; align-items:center; max-width: 320px; margin: 0;">
+                                        @csrf
+                                        <select name="role" class="form-select" style="padding:0.4rem 0.60rem; font-size:0.8rem; height:auto; width: auto; min-width: 180px;">
+                                            <option value="SYSTEM_ADMIN" {{ $role === 'SYSTEM_ADMIN' ? 'selected' : '' }}>SYSTEM_ADMIN / المسؤول العام</option>
+                                            <option value="UNIVERSITY_ADMIN" {{ $role === 'UNIVERSITY_ADMIN' ? 'selected' : '' }}>UNIVERSITY_ADMIN / رئيس الجامعة</option>
+                                            <option value="REGISTRAR" {{ $role === 'REGISTRAR' ? 'selected' : '' }}>REGISTRAR / مسجل الكلية</option>
+                                            <option value="HR_STAFF" {{ $role === 'HR_STAFF' ? 'selected' : '' }}>HR_STAFF / الموارد البشرية</option>
+                                            <option value="AUDITOR" {{ $role === 'AUDITOR' ? 'selected' : '' }}>AUDITOR / مدقق النظام</option>
+                                            <option value="FACULTY" {{ $role === 'FACULTY' ? 'selected' : '' }}>FACULTY / عضو هيئة التدريس</option>
+                                            <option value="STUDENT" {{ $role === 'STUDENT' ? 'selected' : '' }}>STUDENT / طالب باحث</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary btn-sm btn-green" style="padding: 6px 12px; font-weight:800;" title="{{ $t('Save Changes', 'حفظ التغييرات') }}">
+                                            💾 {{ $t('Save', 'حفظ') }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🔑</div><p>No users registered</p></div></td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- ══ API DOCUMENTATION ══ -->
         <div id="section-api-docs" class="page-section">
             <div class="card" style="height: calc(100vh - 200px); overflow: hidden; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-lg);">
@@ -1807,6 +1885,7 @@
         'publications':    ['{{ $t("Publications", "المنشورات العلمية") }}', '{{ $t("RGMS — Journals, conferences & books", "المجلات العلمية والمؤتمرات والكتب") }}'],
         'add-records':     ['{{ $t("Add Records", "إضافة سجلات جديدة") }}', '{{ $t("Register new students, staff, groups, members, or projects", "تسجيل طالب، موظف، مجموعة، مشروع جديد") }}'],
         'audit-logs':      ['{{ $t("Compliance Audit Trails", "سجلات التدقيق الأمني") }}', '{{ $t("System-wide immutable logs", "سجلات غير قابلة للتعديل لكامل النظام") }}'],
+        'users-management': ['{{ $t("Users & Roles Manager", "إدارة المستخدمين والصلاحيات") }}', '{{ $t("Modify user security privileges dynamically with audit trails", "تعديل الصلاحيات الأمنية للمستخدمين وتغيير رتبهم فورياً") }}'],
         'api-docs':        ['{{ $t("API Documentation", "توثيق الـ API المدمج") }}', '{{ $t("Interactive Scribe API endpoints reference", "مرجع واجهة التطبيق التفاعلية") }}'],
     };
 
