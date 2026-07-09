@@ -880,7 +880,7 @@
                                 </td>
                                 <td style="text-align:{{ $isAr ? 'left' : 'right' }}; white-space:nowrap;">
                                     @if(auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN', 'REGISTRAR']))
-                                    <button class="btn btn-outline btn-sm btn-green" onclick="openEditStudentModal('{{ $student->id }}', '{{ addslashes($student->institutional_id) }}', '{{ addslashes($student->national_id) }}', '{{ addslashes($student->name_en) }}', '{{ addslashes($student->name_ar) }}', '{{ $student->date_of_birth }}', '{{ $student->gender?->value }}', '{{ $student->admission_date }}')">✏️ {{ $t('Edit', 'تعديل') }}</button>
+                                    <button class="btn btn-outline btn-sm btn-green" onclick="openEditStudentModal('{{ $student->id }}', '{{ addslashes($student->institutional_id) }}', '{{ addslashes($student->national_id) }}', '{{ addslashes($student->name_en) }}', '{{ addslashes($student->name_ar) }}', '{{ $student->date_of_birth }}', '{{ $student->gender?->value }}', '{{ $student->admission_date }}', '{{ $student->enrollment_status?->value ?? 'ACTIVE' }}')">✏️ {{ $t('Edit', 'تعديل') }}</button>
                                     <button class="btn btn-outline btn-sm btn-red" onclick="confirmDelete('/students/{{ $student->id }}/delete')">🗑️ {{ $t('Delete', 'حذف') }}</button>
                                     @endif
                                 </td>
@@ -2012,7 +2012,7 @@
         document.getElementById('edit-modal').style.display = 'none';
     }
 
-    function openEditStudentModal(id, instId, natId, nameEn, nameAr, dob, gender, admDate) {
+    function openEditStudentModal(id, instId, natId, nameEn, nameAr, dob, gender, admDate, status) {
         document.getElementById('modal-title').textContent = jsT('🎓 Edit Student Profile', '🎓 تعديل ملف الطالب');
         document.getElementById('edit-form').action = `/students/${id}/edit`;
         
@@ -2045,9 +2045,18 @@
                     <option value="FEMALE" ${gender === 'FEMALE' ? 'selected' : ''}>${jsT('Female / أنثى', 'أنثى')}</option>
                 </select>
             </div>
-            <div class="form-group form-full">
+            <div class="form-group">
                 <label>${jsT('Admission Date *', 'تاريخ القبول والانتساب *')}</label>
                 <input type="date" name="admissionDate" class="form-input" value="${admDate}" required>
+            </div>
+            <div class="form-group">
+                <label>${jsT('Enrollment Status *', 'حالة قيد الطالب *')}</label>
+                <select name="enrollmentStatus" class="form-select" required>
+                    <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>${jsT('Active / نشط', 'نشط')}</option>
+                    <option value="SUSPENDED" ${status === 'SUSPENDED' ? 'selected' : ''}>${jsT('Suspended / موقوف مؤقتاً', 'موقوف مؤقتاً')}</option>
+                    <option value="GRADUATED" ${status === 'GRADUATED' ? 'selected' : ''}>${jsT('Graduated / خريج', 'خريج')}</option>
+                    <option value="WITHDRAWN" ${status === 'WITHDRAWN' ? 'selected' : ''}>${jsT('Withdrawn / منسحب', 'منسحب')}</option>
+                </select>
             </div>
         `;
         document.getElementById('edit-modal').style.display = 'flex';

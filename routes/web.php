@@ -124,6 +124,7 @@ Route::middleware('auth')->group(function () {
             'dateOfBirth' => ['required', 'date'],
             'gender' => ['required', 'string', 'in:MALE,FEMALE'],
             'admissionDate' => ['required', 'date'],
+            'enrollmentStatus' => ['required', 'string', 'in:ACTIVE,SUSPENDED,GRADUATED,WITHDRAWN'],
         ]);
 
         try {
