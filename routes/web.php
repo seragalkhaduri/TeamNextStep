@@ -3,9 +3,12 @@
 use App\Livewire\AuditLogViewer;
 use App\Domain\Students\Services\StudentService;
 use App\Domain\Employees\Services\EmployeeService;
+use App\Domain\Auth\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 // Guest Authentication Routes
@@ -28,6 +31,36 @@ Route::middleware('guest')->group(function () {
         return back()->withErrors([
             'username' => 'Invalid username or password.',
         ])->onlyInput('username');
+    });
+
+    Route::post('/register', function (Request $request) {
+        $validator = Validator::make($request->all(), [
+            'username' => ['required', 'string', 'max:50', 'unique:users,username'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:SYSTEM_ADMIN,UNIVERSITY_ADMIN,REGISTRAR_STAFF,HR_STAFF,ACADEMIC_STAFF,STUDENT,EMPLOYEE'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_panel', 'signup');
+        }
+
+        $data = $validator->validated();
+
+        $user = User::create([
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password_hash' => Hash::make($data['password']),
+        ]);
+
+        $user->syncRoles([$data['role']]);
+
+        return redirect('/login')
+            ->with('success', 'Account created successfully. Please sign in.')
+            ->with('active_panel', 'login');
     });
 });
 

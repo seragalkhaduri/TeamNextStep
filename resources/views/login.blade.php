@@ -148,6 +148,47 @@
             text-align: left;
         }
 
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .tab-switcher {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--white);
+            border-color: rgba(99, 102, 241, 0.45);
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
         /* Demo credentials helper */
         .credentials-helper {
             margin-top: 2rem;
@@ -204,30 +245,94 @@
             <p>Unified University & Research Platform</p>
         </div>
 
+        @if(session('success'))
+            <div class="alert-success">
+                ✅ {{ session('success') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="alert-error">
                 ⚠️ {{ $errors->first() }}
             </div>
         @endif
 
-        <form action="/login" method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="username">Username</label>
-                <div class="input-wrapper">
-                    <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" value="{{ old('username') }}" required autofocus>
-                </div>
-            </div>
+        <div class="tab-switcher">
+            <button type="button" class="tab-button active" data-panel="login-panel">Sign In</button>
+            <button type="button" class="tab-button" data-panel="signup-panel">Sign Up</button>
+        </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+        <div class="panel" id="login-panel">
+            <form action="/login" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" value="{{ old('username') }}" required autofocus>
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" class="btn-submit">Sign In</button>
-        </form>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+        </div>
+
+        <div class="panel hidden" id="signup-panel">
+            <form action="/register" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="signup-username" name="username" class="form-input" placeholder="Choose a username" value="{{ old('username') }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="signup-email" name="email" class="form-input" placeholder="Enter your email" value="{{ old('email') }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signup-password" name="password" class="form-input" placeholder="Create a password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password_confirmation">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signup-password_confirmation" name="password_confirmation" class="form-input" placeholder="Repeat password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-role">User Type</label>
+                    <div class="input-wrapper">
+                        <select id="signup-role" name="role" class="form-input" required>
+                            <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select user type</option>
+                            <option value="SYSTEM_ADMIN" {{ old('role') === 'SYSTEM_ADMIN' ? 'selected' : '' }}>Admin</option>
+                            <option value="UNIVERSITY_ADMIN" {{ old('role') === 'UNIVERSITY_ADMIN' ? 'selected' : '' }}>University Admin</option>
+                            <option value="REGISTRAR_STAFF" {{ old('role') === 'REGISTRAR_STAFF' ? 'selected' : '' }}>Registrar Staff</option>
+                            <option value="HR_STAFF" {{ old('role') === 'HR_STAFF' ? 'selected' : '' }}>HR Staff</option>
+                            <option value="ACADEMIC_STAFF" {{ old('role') === 'ACADEMIC_STAFF' ? 'selected' : '' }}>Academic Staff</option>
+                            <option value="STUDENT" {{ old('role') === 'STUDENT' ? 'selected' : '' }}>Student</option>
+                            <option value="EMPLOYEE" {{ old('role') === 'EMPLOYEE' ? 'selected' : '' }}>Employee</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+        </div>
 
         <details class="credentials-helper">
             <summary>Key Demo Accounts (Password: <code>password</code>)</summary>
@@ -241,5 +346,21 @@
     </div>
 </div>
 
+<script>
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.panel');
+    const activePanel = '{{ session('active_panel', 'login') }}';
+
+    function showPanel(panelId) {
+        panels.forEach(panel => panel.classList.toggle('hidden', panel.id !== panelId));
+        tabButtons.forEach(button => button.classList.toggle('active', button.dataset.panel === panelId));
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => showPanel(button.dataset.panel));
+    });
+
+    showPanel(activePanel === 'signup' ? 'signup-panel' : 'login-panel');
+</script>
 </body>
 </html>
