@@ -16,4 +16,4 @@ echo - UIMP Core:      http://127.0.0.1:8000
 echo - RGMS Subsystem: http://127.0.0.1:8001
 echo.
 echo Press any key to close this launcher (servers will keep running in separate windows).
-pause > null
+pause > nul
