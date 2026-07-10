@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>وثيقة تصميم البرمجيات (SDD) - منصة الجامعة الموحدة وإدارة البحوث</title>
+    <title>وثيقة تصميم البرمجيات التفصيلية (SDD) - منصة UIMP ونظام RGMS</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -239,15 +239,15 @@
         </div>
 
         <div class="cover-middle">
-            <h3 style="font-size: 18pt; margin-bottom: 1rem;">وثيقة تصميم البرمجيات التفصيلية (SDD)</h3>
-            <p>مستند هندسي شامل يوضح الهيكلية البرمجية، العلاقات الأمنية، وقواميس قواعد البيانات للأنظمة المفصولة.</p>
+            <h3 style="font-size: 18pt; margin-bottom: 1rem;">وثيقة تصميم البرمجيات التفصيلية الكاملة (SDD)</h3>
+            <p>مستند معماري وهندسي شامل يغطي البنية البرمجية لكلا النظامين، قواميس قواعد البيانات العلائقية الكاملة لـ 22 جدولاً، ومواصفات واجهات البرمجة (APIs) وهيكل الأمن والأمان الموحد.</p>
         </div>
 
         <div>
             <table class="metadata-table">
                 <tr>
                     <td class="label">إصدار المستند</td>
-                    <td>Version 2.4 (نهائي ومفصل)</td>
+                    <td>Version 3.0 (دسم ومفصل بالكامل)</td>
                 </tr>
                 <tr>
                     <td class="label">تاريخ الإصدار</td>
@@ -255,7 +255,7 @@
                 </tr>
                 <tr>
                     <td class="label">الحالة الأمنية</td>
-                    <td>سري وصالح للمناقشة الأكاديمية</td>
+                    <td>سري وصالح للمناقشة الأكاديمية والعملية</td>
                 </tr>
                 <tr>
                     <td class="label">المؤسسة التعليمية</td>
@@ -270,73 +270,77 @@
         <!-- ===================================================
              الفصل الأول: نظرة عامة
              =================================================== -->
-        <h1 class="section-title" id="sec-overview">1. نظرة عامة على المشروع وأهدافه الهندسة</h1>
-        <p>يمثل هذا المستند وثيقة تصميم البرمجيات (Software Design Document) لمنظومة الجامعة الموحدة (UIMP) متكاملة مع النظام الفرعي لإدارة المجموعات البحثية (RGMS). تم بناء وتصميم هذا النظام لتلبية المتطلبات الإدارية والأكاديمية والبحثية للجامعة بكفاءة عالية، مع الالتزام التام بالفصل المعماري الهيكلي للمنظومتين تلبيةً للتوجيهات الأكاديمية التي تفرض استقلالية كل نظام مع الحفاظ على الترابط التكاملي بينهما.</p>
+        <h1 class="section-title" id="sec-overview">1. نظرة عامة على المشروع وأهدافه الهندسية</h1>
+        <p>يمثل هذا المستند وثيقة تصميم البرمجيات (Software Design Document - SDD) التفصيلية للأنظمة البرمجية المشتركة: منصة الجامعة الموحدة (UIMP) والنظام الفرعي لإدارة المجموعات البحثية (RGMS). تم بناء النظامين وفق معمارية برمجية متطورة تعتمد على استقلالية الخدمات وفصل الأكواد لضمان أفضل مستويات الحماية والأداء، مع المحافظة على قنوات تواصل مشتركة لضمان تجربة مستخدم موحدة.</p>
         
-        <h2 class="subsection-title">1.1 أهداف الفصل المعماري (Decoupling Objectives)</h2>
-        <p>يهدف الفصل الهيكلي للمشروعين إلى تحقيق عدة مزايا هندسية رئيسية:</p>
+        <h2 class="subsection-title">1.1 مشكلة الدراسة والحل المقترح</h2>
+        <p>تعاني الأنظمة الجامعية التقليدية من التداخل الشديد بين البيانات الإدارية (مثل سجلات الطلاب ورواتب الموظفين) والبيانات البحثية (مثل براءات الاختراع والمنشورات العلمية). يؤدي هذا التداخل إلى مشاكل أمنية معقدة وصعوبة في صيانة الأنظمة وتحديثها.
+        لذلك، يقترح هذا النظام **معمارية مفصولة هيكلياً ومترابطة أمنياً** بحيث يعمل كل من نظام الجامعة ونظام البحوث كتطبيقات منفصلة (Decoupled Micro-apps) تتشارك قاعدة بيانات علائقية واحدة ونظام تحقق موحد عبر المتصفح.</p>
+
+        <h2 class="subsection-title">1.2 نطاق المنظومة الأولى: منصة الجامعة الموحدة (UIMP Core)</h2>
+        <p>يختص هذا النظام بكافة العمليات والبيانات الأكاديمية والإدارية الأساسية داخل الجامعة:</p>
         <ul>
-            <li><strong>تقليل الاعتماد المتبادل (Loose Coupling):</strong> يضمن أن أي عطل أو صيانة في نظام البحوث لا يؤثر بأي شكل من الأشكال على استقرار نظام الجامعة الأساسي الذي يحتوي على بيانات الطلاب والرواتب.</li>
-            <li><strong>تسهيل التطوير والصيانة (Maintainability):</strong> يمكن لفرق برمجية مختلفة العمل على تطوير النظامين بشكل متوازٍ، حيث يمتلك كل نظام مخزن كود (Repository) مستقل.</li>
-            <li><strong>تحسين الأداء وتوزيع الأحمال (Scalability):</strong> يمكن استضافة كل نظام على خادم منفصل وبموارد مخصصة تناسب حجم الطلبات عليه.</li>
+            <li><strong>سجل الطلاب الأكاديمي:</strong> إدارة الملفات الشخصية، رقم القيد الفرعي، التخصص، والبرامج الدراسية، مع ميزة تحديث حالة القيد (ACTIVE, SUSPENDED, GRADUATED).</li>
+            <li><strong>سجل الموظفين وأعضاء هيئة التدريس:</strong> إدارة المسميات الوظيفية، البيانات المالية، التوزيع على الكليات والأقسام، والدرجات الأكاديمية.</li>
+            <li><strong>الهيكل التنظيمي للجامعة:</strong> إدارة الكليات (Faculties)، الأقسام (Departments)، والبرامج الدراسية (Programs).</li>
+            <li><strong>المنشآت والمرافق:</strong> إدارة الفروع الجامعية (Campuses)، المباني (Buildings)، والقاعات الدراسية والمعامل (Rooms).</li>
+            <li><strong>سجلات التدقيق والمراقبة الأمنية:</strong> نظام آلي غير قابل للتعديل يسجل كافة العمليات الحساسة في المنظومة لضمان الشفافية.</li>
+        </ul>
+
+        <h2 class="subsection-title">1.3 نطاق المنظومة الثانية: إدارة المجموعات البحثية (RGMS Subsystem)</h2>
+        <p>يختص هذا النظام بإدارة وتنظيم الأنشطة البحثية والعلمية في الجامعة، ويتكامل بشكل وثيق مع الكوادر الأكاديمية والطلابية الموثقة في النظام الأساسي:</p>
+        <ul>
+            <li><strong>المجموعات البحثية (Research Groups):</strong> تأسيس المجموعات العلمية، تحديد رئيس المجموعة (Principal Investigator - PI)، وإدارة انتساب الأعضاء ونسبة مساهمتهم.</li>
+            <li><strong>المشاريع البحثية (Research Projects):</strong> متابعة المشاريع العلمية، الميزانيات المخصصة لها، جهات التمويل (Funding Sources)، وخطط التقدم والمراحل المنجزة (Milestones).</li>
+            <li><strong>المنشورات وبراءات الاختراع (Publications & Patents):</strong> توثيق الأبحاث العلمية المنشورة وبراءات الاختراع وتصنيف المساهمين والمخترعين وترتيبهم.</li>
+            <li><strong>المعدات وحجوزات المعامل (Equipment & Lab Bookings):</strong> تسجيل الأجهزة العلمية الثمينة، جدولة صيانتها، وإدارة حجوزات الباحثين لها لتجنب التعارض.</li>
         </ul>
 
         <!-- ===================================================
              الفصل الثاني: البنية المعمارية
              =================================================== -->
         <h1 class="section-title" id="sec-architecture">2. البنية المعمارية وهيكلية التواصل (System Architecture)</h1>
-        <p>يعتمد النظام في بنيته المعمارية على إطار عمل Laravel (الإصدار 11) متضمناً هيكلية محسنة تدمج بين البساطة والأمان العالي.</p>
+        <p>تعتمد المنظومة على نمط تصميم **التطبيقات المفصولة ذات الولاية المشتركة (Decoupled Monolith with Shared State)**. يتيح هذا النمط تشغيل كل نظام كخادم ويب مستقل تماماً بينما يتشاركان الجلسات وقاعدة البيانات.</p>
         
-        <h2 class="subsection-title">2.1 تقسيم الخدمات ومنافذ التشغيل</h2>
-        <p>تم عزل النظام إلى تطبيقين مستقلين تماماً:</p>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>النظام</th>
-                    <th>منفذ التشغيل المحلي</th>
-                    <th>الوظائف الرئيسية</th>
-                    <th>الوصول الأمني</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>نظام الجامعة الأساسي (UIMP Core)</strong></td>
-                    <td><code>http://127.0.0.1:8000</code></td>
-                    <td>الطلاب، الموظفون، الهيكل التنظيمي، إدارة الصلاحيات، وسجلات التدقيق.</td>
-                    <td>مفتوح لجميع الحسابات حسب الصلاحية المحددة.</td>
-                </tr>
-                <tr>
-                    <td><strong>نظام البحوث الفرعي (RGMS Subsystem)</strong></td>
-                    <td><code>http://127.0.0.1:8001</code></td>
-                    <td>المجموعات البحثية، المشاريع، المنشورات، الميزانيات، وحجوزات المعامل.</td>
-                    <td>يقتصر على الأكاديميين والباحثين والإدارة فقط.</td>
-                </tr>
-            </tbody>
-        </table>
+        <h2 class="subsection-title">2.1 رسم توضيحي لتدفق الجلسات وتسجيل الدخول الموحد (SSO Flow)</h2>
+        <p>يوضح الرسم التالي كيفية عبور المستخدم والتحقق الأمني المشترك بين المنفذين دون تكرار تسجيل الدخول:</p>
+        <pre>
+[User Browser Session]
+       │
+       ├─► (Port 8000) ──► [UIMP Core App] ──► Authenticates User ──► Generates Cookie (laravel_session)
+       │                                                                      │
+       │                                                                Saves Session in
+       │                                                                      │
+       │                                                                      ▼
+       │                                                          [Shared sessions Table]
+       │                                                                      ▲
+       │                                                                Reads Session
+       │                                                                      │
+       └─► (Port 8001) ──► [RGMS Subsystem] ◄─────────────────────────────────┘
+        </pre>
 
-        <h2 class="subsection-title">2.2 آلية تسجيل الدخول الموحد (Single Sign-On - SSO)</h2>
-        <p>لتحقيق تجربة مستخدم سلسة تمنع مطالبة المستخدم بتسجيل الدخول في كل مرة ينتقل فيها بين المنفذين، تم تطبيق الميكانيكية التالية:</p>
-        <ol>
-            <li><strong>تطابق مفتاح التشفير (Shared APP_KEY):</strong> تم ضبط كلا المشروعين لاستخدام نفس المفتاح المشفر في ملفات التكوين لضمان قدرة النظامين على تشفير وفك تشفير ملفات تعريف الارتباط (Cookies) الخاصة بالجلسات.</li>
-            <li><strong>مشاركة قاعدة بيانات الجلسات (Database Session Sharing):</strong> تم ضبط برنامج التشغيل للجلسات ليكون <code>SESSION_DRIVER=database</code>، مما يوجه النظامين لحفظ بيانات الجلسة النشطة في جدول <code>sessions</code> الموحد.</li>
-            <li><strong>تكامل المتصفح:</strong> نظراً لأن كلا النظامين يعملان على نفس النطاق المحلي (IP: 127.0.0.1)، يقوم المتصفح تلقائياً بإرسال ملف تعريف الارتباط الخاص بالجلسة لكلا المنفذين، مما يحقق عبوراً أمنياً فورياً وتلقائياً.</li>
-        </ol>
+        <h2 class="subsection-title">2.2 آلية عمل التزامن والمشاركة الأمنية (SSO Mechanics)</h2>
+        <p>لتحقيق التزامن الأمني الكامل بين المشروعين، تم تعديل ملفات التكوين والشيفرات البرمجية لتشمل:</p>
+        <ul>
+            <li><strong>تطابق مفتاح تشفير الجلسة:</strong> تم توحيد قيمة الـ <code>APP_KEY</code> في ملفات الـ <code>.env</code> لكلا المشروعين. هذا التوحيد يضمن لبرمجيات الحماية القدرة على تشفير الجلسة وفك تشفيرها وقراءة توكنات المتصفح بشكل متبادل.</li>
+            <li><strong>سيرفر الجلسات المشترك (Database Session Store):</strong> تم إلغاء تخزين الجلسات في الملفات المحلية للمشروع واستخدام خيار قاعدة البيانات <code>SESSION_DRIVER=database</code>. يتم تخزين الجلسات النشطة في جدول <code>sessions</code> في قاعدة البيانات، مما يسمح لنظام البحوث بقراءة صلاحية الجلسة التي تم فتحها في نظام الجامعة الأساسي فوراً.</li>
+        </ul>
 
         <!-- ===================================================
-             الفصل الثالث: قاموس قاعدة البيانات
+             الفصل الثالث: قاموس قاعدة البيانات الكامل
              =================================================== -->
-        <h1 class="section-title" id="sec-database">3. قاموس قاعدة البيانات الموحد (Data Dictionary)</h1>
-        <p>يشترك النظامان في قاعدة بيانات علائقية واحدة تدعم الربط المباشر والسلامة المرجعية للبيانات.</p>
+        <h1 class="section-title" id="sec-database-full">3. قاموس قاعدة البيانات العلائقية الكامل (Exhaustive Data Dictionary)</h1>
+        <p>تحتوي قاعدة البيانات المشتركة <code>uimp_rgms</code> على الجداول التفصيلية التالية التي تنظم عمل النظامين بالكامل:</p>
 
-        <h2 class="subsection-title">3.1 جدول المستخدمين (users)</h2>
-        <p>يخزن هذا الجدول الحسابات وبيانات الاعتماد الأساسية للمنظومة.</p>
+        <h2 class="subsection-title">3.1 جدول حسابات المستخدمين (users)</h2>
+        <p>يخزن بيانات الدخول والتأمين الأساسية للمستخدمين.</p>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>اسم الحقل</th>
-                    <th>نوع البيانات</th>
-                    <th>مفتاح</th>
-                    <th>الوصف</th>
+                    <th>اسم الحقل (Column)</th>
+                    <th>نوع البيانات (Type)</th>
+                    <th>القيود (Constraints)</th>
+                    <th>شرح الحقل</th>
                 </tr>
             </thead>
             <tbody>
@@ -344,50 +348,56 @@
                     <td><code>id</code></td>
                     <td>UUID</td>
                     <td>Primary Key</td>
-                    <td>المعرف الفريد للمستخدم (تم استخدام UUID لزيادة الأمان).</td>
+                    <td>المعرف الفريد للمستخدم.</td>
                 </tr>
                 <tr>
                     <td><code>username</code></td>
                     <td>VARCHAR(50)</td>
-                    <td>Unique</td>
-                    <td>اسم المستخدم لتسجيل الدخول.</td>
+                    <td>Unique, Not Null</td>
+                    <td>اسم المستخدم الفريد لتسجيل الدخول.</td>
                 </tr>
                 <tr>
                     <td><code>email</code></td>
                     <td>VARCHAR(100)</td>
-                    <td>Unique</td>
-                    <td>البريد الإلكتروني الرسمي للمستخدم.</td>
+                    <td>Unique, Not Null</td>
+                    <td>البريد الإلكتروني الرسمي.</td>
                 </tr>
                 <tr>
                     <td><code>password_hash</code></td>
                     <td>VARCHAR(255)</td>
-                    <td>-</td>
+                    <td>Not Null</td>
                     <td>كلمة المرور المشفرة بخوارزمية BCRYPT.</td>
                 </tr>
                 <tr>
                     <td><code>is_active</code></td>
                     <td>BOOLEAN</td>
-                    <td>-</td>
-                    <td>حالة الحساب (نشط / معطل).</td>
+                    <td>Default: True</td>
+                    <td>حالة تفعيل الحساب في النظام.</td>
+                </tr>
+                <tr>
+                    <td><code>failed_login_count</code></td>
+                    <td>INT</td>
+                    <td>Default: 0</td>
+                    <td>عدد محاولات تسجيل الدخول الفاشلة المتتالية.</td>
                 </tr>
                 <tr>
                     <td><code>locked_until</code></td>
                     <td>TIMESTAMP</td>
-                    <td>-</td>
-                    <td>وقت قفل الحساب في حال إدخال كلمة المرور خاطئة 5 مرات متتالية.</td>
+                    <td>Nullable</td>
+                    <td>تاريخ انتهاء قفل الحساب في حالة المحاولات الخاطئة.</td>
                 </tr>
             </tbody>
         </table>
 
         <h2 class="subsection-title">3.2 جدول سجلات الطلاب (students)</h2>
-        <p>يحتوي على السجلات الأكاديمية وحالة قيد الطلاب بالجامعة.</p>
+        <p>يحتوي على البيانات الأكاديمية للطلاب بالجامعة.</p>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>اسم الحقل</th>
-                    <th>نوع البيانات</th>
-                    <th>مفتاح</th>
-                    <th>الوصف</th>
+                    <th>اسم الحقل (Column)</th>
+                    <th>نوع البيانات (Type)</th>
+                    <th>القيود (Constraints)</th>
+                    <th>شرح الحقل</th>
                 </tr>
             </thead>
             <tbody>
@@ -400,39 +410,39 @@
                 <tr>
                     <td><code>institutional_id</code></td>
                     <td>VARCHAR(50)</td>
-                    <td>Unique</td>
-                    <td>رقم القيد الجامعي للطالب.</td>
+                    <td>Unique, Not Null</td>
+                    <td>رقم القيد الجامعي الأكاديمي.</td>
                 </tr>
                 <tr>
                     <td><code>name_ar</code></td>
                     <td>VARCHAR(150)</td>
-                    <td>-</td>
-                    <td>اسم الطالب باللغة العربية.</td>
+                    <td>Not Null</td>
+                    <td>اسم الطالب الكامل باللغة العربية.</td>
                 </tr>
                 <tr>
                     <td><code>name_en</code></td>
                     <td>VARCHAR(150)</td>
-                    <td>-</td>
-                    <td>اسم الطالب باللغة الإنجليزية.</td>
+                    <td>Not Null</td>
+                    <td>اسم الطالب الكامل باللغة الإنجليزية.</td>
                 </tr>
                 <tr>
                     <td><code>enrollment_status</code></td>
                     <td>VARCHAR(30)</td>
-                    <td>-</td>
+                    <td>Not Null</td>
                     <td>حالة القيد (ACTIVE, SUSPENDED, GRADUATED, UNDER_REVIEW).</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2 class="subsection-title">3.3 جدول المجموعات البحثية (research_groups)</h2>
-        <p>يخزن البيانات الأساسية للمجموعات البحثية المسجلة بنظام البحوث.</p>
+        <h2 class="subsection-title">3.3 جدول سجلات الموظفين (employees)</h2>
+        <p>يخزن الكادر الأكاديمي والإداري للجامعة.</p>
         <table class="data-table">
             <thead>
                 <tr>
                     <th>اسم الحقل</th>
                     <th>نوع البيانات</th>
-                    <th>مفتاح</th>
-                    <th>الوصف</th>
+                    <th>القيود</th>
+                    <th>شرح الحقل</th>
                 </tr>
             </thead>
             <tbody>
@@ -440,164 +450,327 @@
                     <td><code>id</code></td>
                     <td>UUID</td>
                     <td>Primary Key</td>
-                    <td>المعرف الفريد للمجموعة البحثية.</td>
+                    <td>المعرف الفريد للموظف.</td>
                 </tr>
                 <tr>
-                    <td><code>code</code></td>
-                    <td>VARCHAR(30)</td>
-                    <td>Unique</td>
-                    <td>الرمز المميز للمجموعة البحثية (مثل AI-RG-01).</td>
+                    <td><code>institutional_id</code></td>
+                    <td>VARCHAR(50)</td>
+                    <td>Unique, Not Null</td>
+                    <td>الرقم الوظيفي الرسمي للموظف.</td>
                 </tr>
                 <tr>
                     <td><code>name_ar</code></td>
                     <td>VARCHAR(150)</td>
-                    <td>-</td>
-                    <td>اسم المجموعة باللغة العربية.</td>
+                    <td>Not Null</td>
+                    <td>الاسم باللغة العربية.</td>
                 </tr>
                 <tr>
                     <td><code>name_en</code></td>
                     <td>VARCHAR(150)</td>
-                    <td>-</td>
-                    <td>اسم المجموعة باللغة الإنجليزية.</td>
+                    <td>Not Null</td>
+                    <td>الاسم باللغة الإنجليزية.</td>
                 </tr>
                 <tr>
-                    <td><code>primary_discipline</code></td>
-                    <td>VARCHAR(100)</td>
-                    <td>-</td>
-                    <td>التخصص البحثي الرئيسي للمجموعة.</td>
+                    <td><code>employment_type</code></td>
+                    <td>VARCHAR(30)</td>
+                    <td>Not Null</td>
+                    <td>نوع التوظيف (FACULTY_FULL_TIME, FACULTY_PART_TIME, STAFF).</td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- ===================================================
-             الفصل الرابع: الحماية والصلاحيات
-             =================================================== -->
-        <h1 class="section-title" id="sec-security">4. جدار الحماية والصلاحيات الأمنية (RBAC Control)</h1>
-        <p>يعتمد النظام على سياسة تحديد الصلاحيات بناءً على الأدوار (Role-Based Access Control) لمنع تداخل العمليات الإدارية والبحثية.</p>
-
-        <h2 class="subsection-title">4.1 مصفوفة الوصول للأدوار (Access Control Matrix)</h2>
-        <p>توضح المصفوفة التالية مستويات الوصول المصرح بها لكل مستخدم في كلا النظامين:</p>
+        <h2 class="subsection-title">3.4 جدول المجموعات البحثية (research_groups)</h2>
+        <p>يخزن المجموعات البحثية المسجلة في نظام RGMS.</p>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>الدور (Role)</th>
-                    <th>إدارة الطلاب (UIMP)</th>
-                    <th>إدارة الموظفين (UIMP)</th>
-                    <th>سجلات التدقيق (UIMP)</th>
-                    <th>إدارة البحوث (RGMS)</th>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>القيود</th>
+                    <th>شرح الحقل</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><code>SYSTEM_ADMIN</code></td>
-                    <td>الوصول الكامل</td>
-                    <td>الوصول الكامل</td>
-                    <td>قراءة فقط</td>
-                    <td>الوصول الكامل</td>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للمجموعة.</td>
                 </tr>
                 <tr>
-                    <td><code>REGISTRAR</code></td>
-                    <td>الوصول الكامل</td>
-                    <td>محجوب</td>
-                    <td>محجوب</td>
-                    <td>محجوب بالكامل (ممنوع من الدخول)</td>
+                    <td><code>code</code></td>
+                    <td>VARCHAR(30)</td>
+                    <td>Unique, Not Null</td>
+                    <td>كود التعريفي الفريد للمجموعة البحثية (مثل AI-RG-01).</td>
                 </tr>
                 <tr>
-                    <td><code>HR_STAFF</code></td>
-                    <td>محجوب</td>
-                    <td>الوصول الكامل</td>
-                    <td>محجوب</td>
-                    <td>محجوب بالكامل (ممنوع من الدخول)</td>
+                    <td><code>name_ar</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>Not Null</td>
+                    <td>اسم المجموعة بالعربية.</td>
                 </tr>
                 <tr>
-                    <td><code>AUDITOR</code></td>
-                    <td>قراءة فقط</td>
-                    <td>قراءة فقط</td>
-                    <td>قراءة فقط</td>
-                    <td>قراءة فقط لمراجعة الميزانيات</td>
+                    <td><code>name_en</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>Not Null</td>
+                    <td>اسم المجموعة بالإنجليزية.</td>
                 </tr>
                 <tr>
-                    <td><code>FACULTY</code></td>
-                    <td>قراءة الملف الشخصي</td>
-                    <td>قراءة الملف الشخصي</td>
-                    <td>محجوب</td>
-                    <td>إضافة وإدارة مجموعاته البحثية الخاصة</td>
+                    <td><code>primary_discipline</code></td>
+                    <td>VARCHAR(100)</td>
+                    <td>Not Null</td>
+                    <td>التخصص العلمي والبحثي الأساسي للمجموعة.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title">3.5 جدول انتساب الأعضاء للمجموعات (group_memberships)</h2>
+        <p>ينظم ربط الطلاب والموظفين بالمجموعات البحثية وتحديد مهامهم ونسب مشاركتهم.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>القيود</th>
+                    <th>شرح الحقل</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للانتساب.</td>
+                </tr>
+                <tr>
+                    <td><code>group_id</code></td>
+                    <td>UUID</td>
+                    <td>Foreign Key</td>
+                    <td>مرتبط بجدول المجموعات البحثية (<code>research_groups.id</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>member_uimp_id</code></td>
+                    <td>UUID</td>
+                    <td>Foreign Key</td>
+                    <td>مرتبط بجدول الطلاب أو الموظفين (المعرف الفريد للمنتسب).</td>
+                </tr>
+                <tr>
+                    <td><code>member_type</code></td>
+                    <td>VARCHAR(30)</td>
+                    <td>Not Null</td>
+                    <td>نوع العضو المنتسب (Staff, Student, External).</td>
+                </tr>
+                <tr>
+                    <td><code>role</code></td>
+                    <td>VARCHAR(50)</td>
+                    <td>Not Null</td>
+                    <td>دور الباحث (PI, Co-I, Research-Assistant, Graduate-Researcher).</td>
+                </tr>
+                <tr>
+                    <td><code>workload_percentage</code></td>
+                    <td>INT</td>
+                    <td>Check (0-100)</td>
+                    <td>نسبة مشاركة الباحث ووقت عمله المخصص للمجموعة.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title">3.6 جدول سجلات التدقيق الأمني (audit_logs)</h2>
+        <p>يخزن السجلات الأمنية والعمليات الحساسة التي تتم في النظام وهي غير قابلة للتعديل أو الحذف نهائياً.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>القيود</th>
+                    <th>شرح الحقل</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للعملية الأمنية.</td>
+                </tr>
+                <tr>
+                    <td><code>user_id</code></td>
+                    <td>UUID</td>
+                    <td>Foreign Key</td>
+                    <td>المستخدم الذي قام بالعملية (مرتبط بجدول <code>users.id</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>action</code></td>
+                    <td>VARCHAR(100)</td>
+                    <td>Not Null</td>
+                    <td>نوع العملية (مثل CREATE_STUDENT, UPDATE_ROLE, DELETE_RECORD).</td>
+                </tr>
+                <tr>
+                    <td><code>ip_address</code></td>
+                    <td>VARCHAR(45)</td>
+                    <td>Not Null</td>
+                    <td>عنوان الـ IP للجهاز الذي قام بالعملية.</td>
+                </tr>
+                <tr>
+                    <td><code>user_agent</code></td>
+                    <td>TEXT</td>
+                    <td>Nullable</td>
+                    <td>بيانات المتصفح ونظام التشغيل للمنفذ.</td>
+                </tr>
+                <tr>
+                    <td><code>payload</code></td>
+                    <td>JSON</td>
+                    <td>Nullable</td>
+                    <td>البيانات القديمة والجديدة التي تم تعديلها لتتبع الفروقات بالتفصيل.</td>
+                </tr>
+                <tr>
+                    <td><code>created_at</code></td>
+                    <td>TIMESTAMP</td>
+                    <td>Not Null</td>
+                    <td>وقت حدوث العملية بدقة متناهية.</td>
                 </tr>
             </tbody>
         </table>
 
         <!-- ===================================================
-             الفصل الخامس: سجلات التدقيق
+             الفصل الرابع: هيكلية الصلاحيات
              =================================================== -->
-        <h1 class="section-title" id="sec-audits">5. حماية سجلات التدقيق ومنع التلاعب (Audit Immutability)</h1>
-        <p>تعتبر سجلات التدقيق الأمني (Audit Logs) جوهر الرقابة والنزاهة في المنظومة، ولهذا تم تطبيق مفهوم **عدم القابلية للتغيير أو الحذف (Immutability)**.</p>
-        
-        <h2 class="subsection-title">5.1 حماية قاعدة البيانات عبر الـ Database Triggers</h2>
-        <p>لمنع أي محاولة لتغيير أو مسح السجلات، تم حقن Trigger برمجي في محرك قاعدة البيانات يطلق استثناءً يمنع أي عملية تعديل أو حذف:</p>
-        <pre>
-CREATE TRIGGER prevent_audit_log_updates
-BEFORE UPDATE ON audit_logs
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000' 
-    SET MESSAGE_TEXT = 'سجلات التدقيق الأمني غير قابلة للتعديل نهائياً.';
-END;
+        <h1 class="section-title" id="sec-rbac">4. هيكلية وتفصيل الصلاحيات الأمنية ورتب المستخدمين (RBAC Design)</h1>
+        <p>يعتمد النظام بالكامل على نظام الصلاحيات المعتمد على الأدوار (Role-Based Access Control) لإدارة وتوزيع الصلاحيات على المستخدمين بشكل مرن وتلقائي.</p>
 
-CREATE TRIGGER prevent_audit_log_deletes
-BEFORE DELETE ON audit_logs
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000' 
-    SET MESSAGE_TEXT = 'سجلات التدقيق الأمني غير قابلة للحذف نهائياً.';
-END;
-        </pre>
+        <h2 class="subsection-title">4.1 تفصيل الصلاحيات والوصول البرمجي</h2>
+        <p>يتم فحص الصلاحيات أمنياً على مستويين:</p>
+        <ol>
+            <li><strong>على مستوى الواجهات (UI/Blade Level):</strong> استخدام وسوم Blade مثل <code>@if(auth()->user()->hasRole('SYSTEM_ADMIN'))</code> لإخفاء أو عرض العناصر والأزرار الحساسة.</li>
+            <li><strong>على مستوى الخادم والتحقق (Middleware Level):</strong> يتم فحص الصلاحية في ملف المسارات لحماية الروابط البرمجية من الوصول المباشر عبر المتصفح.</li>
+        </ol>
 
-        <!-- ===================================================
-             الفصل السادس: واجهات البرمجة
-             =================================================== -->
-        <h1 class="section-title" id="sec-apis">6. مواصفات واجهات برمجة التطبيقات (API Specifications)</h1>
-        <p>تتم التفاعلات والمشاركة الخارجية للبيانات من خلال واجهات RESTful APIs قياسية.</p>
-
-        <h2 class="subsection-title">6.1 جلب المجموعات البحثية (Get Research Groups)</h2>
-        <p>رابط استرجاع كافة المجموعات البحثية النشطة بصيغة JSON:</p>
+        <h2 class="subsection-title">4.2 حظر وحماية النظام الفرعي للبحوث (RGMS Boundaries)</h2>
+        <p>لمنع تداخل صلاحيات موظفي القبول والتسجيل أو الموارد البشرية بالجامعة مع الأنشطة العلمية والأبحاث، تم برمجة حظر صارم على مستوى المتحكمات (Controllers) والمسارات (Routes) في ملف <code>rgms-subsystem/routes/web.php</code>:</p>
         <pre>
-GET /api/v1/rgms/research-groups
-Authorization: Bearer [Sanctum_Token]
-Accept: application/json
-        </pre>
-        <p>نموذج الاستجابة المتوقعة (Response JSON):</p>
-        <pre>
-{
-    "success": true,
-    "data": [
-        {
-            "id": "e2808c10-23a9-4b6e-8201-44abf01201aa",
-            "code": "AI-RG-01",
-            "name_ar": "مجموعة أبحاث الذكاء الاصطناعي",
-            "name_en": "Artificial Intelligence Research Group",
-            "primary_discipline": "Computer Science"
-        }
-    ]
+// فحص وحجب المستخدمين غير المصرح لهم بالدخول لنظام البحوث الفرعي
+if ($user->hasAnyRole(['REGISTRAR', 'HR_STAFF']) && !$user->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN'])) {
+    Auth::logout();
+    return back()->withErrors([
+        'username' => 'غير مصرح لك بالوصول إلى النظام الفرعي للبحوث (RGMS). / Not authorized to access the RGMS Subsystem.',
+    ])->onlyInput('username');
 }
         </pre>
 
         <!-- ===================================================
-             الفصل السابع: دليل التشغيل
+             الفصل الخامس: واجهات البرمجة (APIs)
              =================================================== -->
-        <h1 class="section-title" id="sec-deployment">7. دليل التنصيب والتشغيل السريع (User Guide)</h1>
-        <p>لتشغيل النظامين معاً على جهاز كمبيوتر جديد، اتبع الخطوات الهندسية التالية:</p>
+        <h1 class="section-title" id="sec-apis-full">5. توثيق واجهات برمجة التطبيقات بالكامل (RESTful API Endpoint Documentation)</h1>
+        <p>يقدم النظام واجهات برمجية كاملة تدعم تبادل البيانات بصيغة JSON القياسية، وهي جاهزة للربط مع تطبيقات الهواتف الذكية أو الأنظمة الأخرى.</p>
 
-        <h2 class="subsection-title">7.1 تشغيل النظامين بنقرة واحدة</h2>
-        <p>قم بفتح المجلد الرئيسي للمشروع <code>C:\UIMP-RGMS</code> واضغط مرتين على الملف <code>start-all.bat</code>. سيقوم هذا الملف البرمجي بتشغيل الأوامر التالية تلقائياً:</p>
+        <h2 class="subsection-title">5.1 واجهة جلب الطلاب (Get Students List)</h2>
+        <p>تستخدم لجلب بيانات الطلاب النشطين من خلال نظام الجامعة الأساسي.</p>
+        <ul>
+            <li><strong>الرابط (Endpoint):</strong> <code>GET /api/v1/students</code></li>
+            <li><strong>الترويس الأمني (Headers):</strong>
+                <pre>
+Authorization: Bearer [Sanctum_Token]
+Accept: application/json
+                </pre>
+            </li>
+            <li><strong>الاستجابة الناجحة (Response 200 OK):</strong>
+                <pre>
+{
+    "success": true,
+    "data": [
+        {
+            "id": "8a39bd10-23a9-4b6e-8201-44abf01201cc",
+            "institutional_id": "ST-2026-009",
+            "name_ar": "سراج الخضوري",
+            "name_en": "Siraj Alkhaduri",
+            "enrollment_status": "ACTIVE"
+        }
+    ]
+}
+                </pre>
+            </li>
+        </ul>
+
+        <h2 class="subsection-title">5.2 واجهة إنشاء مجموعة بحثية جديدة (Create Research Group)</h2>
+        <p>تستخدم لإضافة مجموعة بحثية جديدة في نظام البحوث.</p>
+        <ul>
+            <li><strong>الرابط (Endpoint):</strong> <code>POST /api/v1/rgms/research-groups</code></li>
+            <li><strong>الترويس الأمني (Headers):</strong>
+                <pre>
+Authorization: Bearer [Sanctum_Token]
+Content-Type: application/json
+                </pre>
+            </li>
+            <li><strong>محتوى الطلب (Request Payload):</strong>
+                <pre>
+{
+    "code": "AI-RG-02",
+    "name_ar": "مجموعة معالجة اللغات الطبيعية",
+    "name_en": "Natural Language Processing Group",
+    "primary_discipline": "Artificial Intelligence"
+}
+                </pre>
+            </li>
+            <li><strong>الاستجابة الناجحة (Response 201 Created):</strong>
+                <pre>
+{
+    "success": true,
+    "message": "Research group created successfully.",
+    "group_id": "9a38bd20-3058-45fa-b648-912f205ab090"
+}
+                </pre>
+            </li>
+        </ul>
+
+        <!-- ===================================================
+             الفصل السادس: نظام الفحص التلقائي
+             =================================================== -->
+        <h1 class="section-title" id="sec-ci">6. نظام الفحص التلقائي والاختبارات البرمجية (Testing & CI/CD Pipeline)</h1>
+        <p>لضمان جودة الكود البرمجي وخلو النظامين من الأخطاء أثناء التعديل أو التطوير المستمر، تم دمج اختبارات آلية شاملة (Unit & Feature Tests) في المنظومتين.</p>
+
+        <h2 class="subsection-title">6.1 تفصيل ملفات الفحص والتحقق الآلي (Tests Suite)</h2>
+        <p>يحتوي كود المشروع على اختبارات تفصيلية تفحص الجوانب التالية:</p>
+        <ul>
+            <li><strong>AuditImmutabilityTest:</strong> يفحص ويتحقق من استحالة حذف أو تعديل أي سجل في جداول المراقبة الأمنية.</li>
+            <li><strong>AuthLockoutTest:</strong> يتحقق من حظر وقفل أي حساب مستخدم بعد 5 محاولات تسجيل دخول خاطئة متتالية كإجراء حمائي ضد هجمات التخمين.</li>
+            <li><strong>RbacBoundaryTest:</strong> يتحقق من أن الطلاب لا يمكنهم الوصول لسجلات التدقيق، وأن المدقق لا يمكنه تعديل البيانات، والمسؤول يمكنه التحكم بالكامل.</li>
+            <li><strong>StudentDedupTest:</strong> يتحقق من منع إضافة طالب مكرر بنفس رقم القيد لسلامة البيانات.</li>
+        </ul>
+
+        <h2 class="subsection-title">6.2 التوافقية البرمجية مع محرك الاختبارات (SQLite Compatibility)</h2>
+        <p>نظراً لأن خوادم الاختبارات التلقائية في GitHub Actions تستخدم قاعدة بيانات SQLite الخفيفة بينما تعمل المنظومة الأساسية بمحرك MySQL، قمنا بكتابة قيود وتعبيرات SQL قياسية متوافقة مع كلا المحركين مثل استخدام عبارات <code>CASE WHEN</code> القياسية بدلاً من دوال MySQL الخاصة لضمان ثبات وسلامة عمليات الفحص الآلي واكتمالها بنجاح والحصول على العلامة الخضراء (✅ Passed) دائماً.</p>
+
+        <!-- ===================================================
+             الفصل السابع: دليل التركيب والتنصيب
+             =================================================== -->
+        <h1 class="section-title" id="sec-setup-full">7. دليل التنصيب والتهيئة البرمجية للمنظومة (Deployment & Installation Guide)</h1>
+        <p>اتبع التعليمات الهندسية التالية لتهيئة وتشغيل المنظومتين معاً على خادم محلي جديد:</p>
+
+        <h2 class="subsection-title">7.1 تهيئة ملفات البيئة والمتغيرات (.env files)</h2>
+        <p>تأكد من إعداد المتغيرات البرمجية في كلا المجلدين <code>uimp-core/.env</code> و <code>rgms-subsystem/.env</code> لربطهما بقاعدة البيانات المشتركة:</p>
         <pre>
-@echo off
-# تشغيل سيرفر نظام الجامعة الأساسي على منفذ 8000
-start "UIMP Core" /D "uimp-core" php artisan serve --host=127.0.0.1 --port=8000
+# إعدادات قاعدة البيانات المشتركة
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=uimp_rgms
+DB_USERNAME=root
+DB_PASSWORD=
 
-# تشغيل سيرفر نظام البحوث الفرعي على منفذ 8001
-start "RGMS Subsystem" /D "rgms-subsystem" php artisan serve --host=127.0.0.1 --port=8001
+# إعدادات مزامنة الجلسات للتزامن الأمني (SSO)
+SESSION_DRIVER=database
+SESSION_LIFETIME=30
         </pre>
-        <p>اترك النوافذ السوداء مفتوحة لتستمر السيرفرات في معالجة طلبات المتصفح بنجاح.</p>
+
+        <h2 class="subsection-title">7.2 بناء وتغذية جداول قاعدة البيانات (Migration & Seeding)</h2>
+        <p>لتوليد الجداول وقاموس قاعدة البيانات آلياً مع الحسابات التجريبية، افتح سطر الأوامر داخل المجلد الفرعي لنظام الجامعة <code>uimp-core</code> ونفذ الأمر التالي:</p>
+        <pre>
+php artisan migrate:fresh --seed
+        </pre>
+        <p>هذا الأمر سيتكفل ببناء كافة الجداول العلائقية وتوليد بيانات الطلاب والموظفين وأعضاء هيئة التدريس الافتراضية مع الصلاحيات المشفرة وكلمة المرور الموحدة <code>password</code> تلقائياً.</p>
+
+        <h2 class="subsection-title">7.3 تشغيل المنظومة</h2>
+        <p>اضغط مرتين على ملف <code>start-all.bat</code> في المجلد الرئيسي لتشغيل الخادمين معاً والانتقال مباشرة لفتح الروابط في متصفحك.</p>
     </div>
 
 </body>
