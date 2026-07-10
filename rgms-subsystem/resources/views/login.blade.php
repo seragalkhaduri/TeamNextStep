@@ -258,21 +258,6 @@
             </div>
         @endif
 
-<<<<<<< HEAD:resources/views/login.blade.php
-        <div class="tab-switcher">
-            <button type="button" class="tab-button active" data-panel="login-panel">Sign In</button>
-            <button type="button" class="tab-button" data-panel="signup-panel">Sign Up</button>
-        </div>
-
-        <div class="panel" id="login-panel">
-            <form action="/login" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" value="{{ old('username') }}" required autofocus>
-                    </div>
-=======
         <form action="/login" method="POST">
             @csrf
             <div class="form-group">
@@ -292,75 +277,11 @@
                 </label>
                 <div class="input-wrapper">
                     <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
->>>>>>> 407744cb975ce874364d0ac6abf583605e5f00e7:rgms-subsystem/resources/views/login.blade.php
                 </div>
+            </div>
 
-<<<<<<< HEAD:resources/views/login.blade.php
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Sign In</button>
-            </form>
-        </div>
-
-        <div class="panel hidden" id="signup-panel">
-            <form action="/register" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="signup-username">Username</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="signup-username" name="username" class="form-input" placeholder="Choose a username" value="{{ old('username') }}" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-email">Email</label>
-                    <div class="input-wrapper">
-                        <input type="email" id="signup-email" name="email" class="form-input" placeholder="Enter your email" value="{{ old('email') }}" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="signup-password" name="password" class="form-input" placeholder="Create a password" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-password_confirmation">Confirm Password</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="signup-password_confirmation" name="password_confirmation" class="form-input" placeholder="Repeat password" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-role">User Type</label>
-                    <div class="input-wrapper">
-                        <select id="signup-role" name="role" class="form-input" required>
-                            <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select user type</option>
-                            <option value="SYSTEM_ADMIN" {{ old('role') === 'SYSTEM_ADMIN' ? 'selected' : '' }}>Admin</option>
-                            <option value="UNIVERSITY_ADMIN" {{ old('role') === 'UNIVERSITY_ADMIN' ? 'selected' : '' }}>University Admin</option>
-                            <option value="REGISTRAR_STAFF" {{ old('role') === 'REGISTRAR_STAFF' ? 'selected' : '' }}>Registrar Staff</option>
-                            <option value="HR_STAFF" {{ old('role') === 'HR_STAFF' ? 'selected' : '' }}>HR Staff</option>
-                            <option value="ACADEMIC_STAFF" {{ old('role') === 'ACADEMIC_STAFF' ? 'selected' : '' }}>Academic Staff</option>
-                            <option value="STUDENT" {{ old('role') === 'STUDENT' ? 'selected' : '' }}>Student</option>
-                            <option value="EMPLOYEE" {{ old('role') === 'EMPLOYEE' ? 'selected' : '' }}>Employee</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Sign Up</button>
-            </form>
-        </div>
-=======
             <button type="submit" class="btn-submit" style="font-family:'Cairo', sans-serif; font-weight:700;">تسجيل الدخول / Sign In</button>
         </form>
->>>>>>> 407744cb975ce874364d0ac6abf583605e5f00e7:rgms-subsystem/resources/views/login.blade.php
 
         <details class="credentials-helper" style="direction:rtl; text-align:right; font-family:'Cairo', sans-serif;">
             <summary style="display:flex; justify-content:space-between; direction:ltr; font-family:'Cairo', sans-serif;">
