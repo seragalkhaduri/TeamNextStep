@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وثيقة تصميم البرمجيات (SDD) - منصة الجامعة الموحدة وإدارة البحوث</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #4f46e5;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --border: #cbd5e1;
+            --bg-light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: #ffffff;
+            font-size: 11pt;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background: #ffffff;
+                color: #000000;
+            }
+            .page-break {
+                page-break-before: always;
+                clear: both;
+            }
+            .no-print {
+                display: none !important;
+            }
+            a {
+                text-decoration: none;
+                color: #000000;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Layout Styles */
+        .cover-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4rem;
+            text-align: center;
+            border: 20px double var(--primary);
+            margin: 20px;
+            page-break-after: always;
+        }
+
+        .cover-header {
+            margin-top: 2rem;
+        }
+
+        .cover-header h1 {
+            font-size: 28pt;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .cover-header h2 {
+            font-size: 18pt;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .cover-middle {
+            margin: 4rem 0;
+        }
+
+        .cover-middle p {
+            font-size: 14pt;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .metadata-table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            font-size: 11pt;
+        }
+
+        .metadata-table td {
+            padding: 10px;
+            border: 1px solid var(--border);
+            text-align: right;
+        }
+
+        .metadata-table td.label {
+            font-weight: 700;
+            background-color: var(--bg-light);
+            width: 30%;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1.section-title {
+            font-size: 22pt;
+            font-weight: 800;
+            color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            page-break-before: always;
+        }
+
+        h2.subsection-title {
+            font-size: 16pt;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid var(--accent);
+            padding-right: 0.75rem;
+        }
+
+        h3.subsubsection-title {
+            font-size: 12pt;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-right: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tables styling */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 10pt;
+        }
+
+        table.data-table th, table.data-table td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: right;
+        }
+
+        table.data-table th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        /* Code block styling */
+        pre {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border);
+            border-right: 5px solid var(--accent);
+            padding: 1.25rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9.5pt;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Floating action buttons for help */
+        .print-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: var(--accent);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-family: inherit;
+            z-index: 1000;
+        }
+        .print-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">🖨️ طباعة المستند كـ PDF</button>
+
+    <!-- ===================================================
+         صفحة الغلاف (COVER PAGE)
+         =================================================== -->
+    <div class="cover-page">
+        <div class="cover-header">
+            <h1>منصة الجامعة الموحدة (UIMP)</h1>
+            <h2>ونظام إدارة المجموعات البحثية (RGMS)</h2>
+            <div style="width: 80px; height: 4px; background: var(--accent); margin: 2rem auto;"></div>
+        </div>
+
+        <div class="cover-middle">
+            <h3 style="font-size: 18pt; margin-bottom: 1rem;">وثيقة تصميم البرمجيات التفصيلية (SDD)</h3>
+            <p>مستند هندسي شامل يوضح الهيكلية البرمجية، العلاقات الأمنية، وقواميس قواعد البيانات للأنظمة المفصولة.</p>
+        </div>
+
+        <div>
+            <table class="metadata-table">
+                <tr>
+                    <td class="label">إصدار المستند</td>
+                    <td>Version 2.4 (نهائي ومفصل)</td>
+                </tr>
+                <tr>
+                    <td class="label">تاريخ الإصدار</td>
+                    <td>يوليو 2026</td>
+                </tr>
+                <tr>
+                    <td class="label">الحالة الأمنية</td>
+                    <td>سري وصالح للمناقشة الأكاديمية</td>
+                </tr>
+                <tr>
+                    <td class="label">المؤسسة التعليمية</td>
+                    <td>كلية تقنية المعلومات - قسم هندسة البرمجيات</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ===================================================
+             الفصل الأول: نظرة عامة
+             =================================================== -->
+        <h1 class="section-title" id="sec-overview">1. نظرة عامة على المشروع وأهدافه الهندسة</h1>
+        <p>يمثل هذا المستند وثيقة تصميم البرمجيات (Software Design Document) لمنظومة الجامعة الموحدة (UIMP) متكاملة مع النظام الفرعي لإدارة المجموعات البحثية (RGMS). تم بناء وتصميم هذا النظام لتلبية المتطلبات الإدارية والأكاديمية والبحثية للجامعة بكفاءة عالية، مع الالتزام التام بالفصل المعماري الهيكلي للمنظومتين تلبيةً للتوجيهات الأكاديمية التي تفرض استقلالية كل نظام مع الحفاظ على الترابط التكاملي بينهما.</p>
+        
+        <h2 class="subsection-title">1.1 أهداف الفصل المعماري (Decoupling Objectives)</h2>
+        <p>يهدف الفصل الهيكلي للمشروعين إلى تحقيق عدة مزايا هندسية رئيسية:</p>
+        <ul>
+            <li><strong>تقليل الاعتماد المتبادل (Loose Coupling):</strong> يضمن أن أي عطل أو صيانة في نظام البحوث لا يؤثر بأي شكل من الأشكال على استقرار نظام الجامعة الأساسي الذي يحتوي على بيانات الطلاب والرواتب.</li>
+            <li><strong>تسهيل التطوير والصيانة (Maintainability):</strong> يمكن لفرق برمجية مختلفة العمل على تطوير النظامين بشكل متوازٍ، حيث يمتلك كل نظام مخزن كود (Repository) مستقل.</li>
+            <li><strong>تحسين الأداء وتوزيع الأحمال (Scalability):</strong> يمكن استضافة كل نظام على خادم منفصل وبموارد مخصصة تناسب حجم الطلبات عليه.</li>
+        </ul>
+
+        <!-- ===================================================
+             الفصل الثاني: البنية المعمارية
+             =================================================== -->
+        <h1 class="section-title" id="sec-architecture">2. البنية المعمارية وهيكلية التواصل (System Architecture)</h1>
+        <p>يعتمد النظام في بنيته المعمارية على إطار عمل Laravel (الإصدار 11) متضمناً هيكلية محسنة تدمج بين البساطة والأمان العالي.</p>
+        
+        <h2 class="subsection-title">2.1 تقسيم الخدمات ومنافذ التشغيل</h2>
+        <p>تم عزل النظام إلى تطبيقين مستقلين تماماً:</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>النظام</th>
+                    <th>منفذ التشغيل المحلي</th>
+                    <th>الوظائف الرئيسية</th>
+                    <th>الوصول الأمني</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>نظام الجامعة الأساسي (UIMP Core)</strong></td>
+                    <td><code>http://127.0.0.1:8000</code></td>
+                    <td>الطلاب، الموظفون، الهيكل التنظيمي، إدارة الصلاحيات، وسجلات التدقيق.</td>
+                    <td>مفتوح لجميع الحسابات حسب الصلاحية المحددة.</td>
+                </tr>
+                <tr>
+                    <td><strong>نظام البحوث الفرعي (RGMS Subsystem)</strong></td>
+                    <td><code>http://127.0.0.1:8001</code></td>
+                    <td>المجموعات البحثية، المشاريع، المنشورات، الميزانيات، وحجوزات المعامل.</td>
+                    <td>يقتصر على الأكاديميين والباحثين والإدارة فقط.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title">2.2 آلية تسجيل الدخول الموحد (Single Sign-On - SSO)</h2>
+        <p>لتحقيق تجربة مستخدم سلسة تمنع مطالبة المستخدم بتسجيل الدخول في كل مرة ينتقل فيها بين المنفذين، تم تطبيق الميكانيكية التالية:</p>
+        <ol>
+            <li><strong>تطابق مفتاح التشفير (Shared APP_KEY):</strong> تم ضبط كلا المشروعين لاستخدام نفس المفتاح المشفر في ملفات التكوين لضمان قدرة النظامين على تشفير وفك تشفير ملفات تعريف الارتباط (Cookies) الخاصة بالجلسات.</li>
+            <li><strong>مشاركة قاعدة بيانات الجلسات (Database Session Sharing):</strong> تم ضبط برنامج التشغيل للجلسات ليكون <code>SESSION_DRIVER=database</code>، مما يوجه النظامين لحفظ بيانات الجلسة النشطة في جدول <code>sessions</code> الموحد.</li>
+            <li><strong>تكامل المتصفح:</strong> نظراً لأن كلا النظامين يعملان على نفس النطاق المحلي (IP: 127.0.0.1)، يقوم المتصفح تلقائياً بإرسال ملف تعريف الارتباط الخاص بالجلسة لكلا المنفذين، مما يحقق عبوراً أمنياً فورياً وتلقائياً.</li>
+        </ol>
+
+        <!-- ===================================================
+             الفصل الثالث: قاموس قاعدة البيانات
+             =================================================== -->
+        <h1 class="section-title" id="sec-database">3. قاموس قاعدة البيانات الموحد (Data Dictionary)</h1>
+        <p>يشترك النظامان في قاعدة بيانات علائقية واحدة تدعم الربط المباشر والسلامة المرجعية للبيانات.</p>
+
+        <h2 class="subsection-title">3.1 جدول المستخدمين (users)</h2>
+        <p>يخزن هذا الجدول الحسابات وبيانات الاعتماد الأساسية للمنظومة.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>مفتاح</th>
+                    <th>الوصف</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للمستخدم (تم استخدام UUID لزيادة الأمان).</td>
+                </tr>
+                <tr>
+                    <td><code>username</code></td>
+                    <td>VARCHAR(50)</td>
+                    <td>Unique</td>
+                    <td>اسم المستخدم لتسجيل الدخول.</td>
+                </tr>
+                <tr>
+                    <td><code>email</code></td>
+                    <td>VARCHAR(100)</td>
+                    <td>Unique</td>
+                    <td>البريد الإلكتروني الرسمي للمستخدم.</td>
+                </tr>
+                <tr>
+                    <td><code>password_hash</code></td>
+                    <td>VARCHAR(255)</td>
+                    <td>-</td>
+                    <td>كلمة المرور المشفرة بخوارزمية BCRYPT.</td>
+                </tr>
+                <tr>
+                    <td><code>is_active</code></td>
+                    <td>BOOLEAN</td>
+                    <td>-</td>
+                    <td>حالة الحساب (نشط / معطل).</td>
+                </tr>
+                <tr>
+                    <td><code>locked_until</code></td>
+                    <td>TIMESTAMP</td>
+                    <td>-</td>
+                    <td>وقت قفل الحساب في حال إدخال كلمة المرور خاطئة 5 مرات متتالية.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title">3.2 جدول سجلات الطلاب (students)</h2>
+        <p>يحتوي على السجلات الأكاديمية وحالة قيد الطلاب بالجامعة.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>مفتاح</th>
+                    <th>الوصف</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للطالب.</td>
+                </tr>
+                <tr>
+                    <td><code>institutional_id</code></td>
+                    <td>VARCHAR(50)</td>
+                    <td>Unique</td>
+                    <td>رقم القيد الجامعي للطالب.</td>
+                </tr>
+                <tr>
+                    <td><code>name_ar</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>-</td>
+                    <td>اسم الطالب باللغة العربية.</td>
+                </tr>
+                <tr>
+                    <td><code>name_en</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>-</td>
+                    <td>اسم الطالب باللغة الإنجليزية.</td>
+                </tr>
+                <tr>
+                    <td><code>enrollment_status</code></td>
+                    <td>VARCHAR(30)</td>
+                    <td>-</td>
+                    <td>حالة القيد (ACTIVE, SUSPENDED, GRADUATED, UNDER_REVIEW).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title">3.3 جدول المجموعات البحثية (research_groups)</h2>
+        <p>يخزن البيانات الأساسية للمجموعات البحثية المسجلة بنظام البحوث.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>اسم الحقل</th>
+                    <th>نوع البيانات</th>
+                    <th>مفتاح</th>
+                    <th>الوصف</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td>UUID</td>
+                    <td>Primary Key</td>
+                    <td>المعرف الفريد للمجموعة البحثية.</td>
+                </tr>
+                <tr>
+                    <td><code>code</code></td>
+                    <td>VARCHAR(30)</td>
+                    <td>Unique</td>
+                    <td>الرمز المميز للمجموعة البحثية (مثل AI-RG-01).</td>
+                </tr>
+                <tr>
+                    <td><code>name_ar</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>-</td>
+                    <td>اسم المجموعة باللغة العربية.</td>
+                </tr>
+                <tr>
+                    <td><code>name_en</code></td>
+                    <td>VARCHAR(150)</td>
+                    <td>-</td>
+                    <td>اسم المجموعة باللغة الإنجليزية.</td>
+                </tr>
+                <tr>
+                    <td><code>primary_discipline</code></td>
+                    <td>VARCHAR(100)</td>
+                    <td>-</td>
+                    <td>التخصص البحثي الرئيسي للمجموعة.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ===================================================
+             الفصل الرابع: الحماية والصلاحيات
+             =================================================== -->
+        <h1 class="section-title" id="sec-security">4. جدار الحماية والصلاحيات الأمنية (RBAC Control)</h1>
+        <p>يعتمد النظام على سياسة تحديد الصلاحيات بناءً على الأدوار (Role-Based Access Control) لمنع تداخل العمليات الإدارية والبحثية.</p>
+
+        <h2 class="subsection-title">4.1 مصفوفة الوصول للأدوار (Access Control Matrix)</h2>
+        <p>توضح المصفوفة التالية مستويات الوصول المصرح بها لكل مستخدم في كلا النظامين:</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الدور (Role)</th>
+                    <th>إدارة الطلاب (UIMP)</th>
+                    <th>إدارة الموظفين (UIMP)</th>
+                    <th>سجلات التدقيق (UIMP)</th>
+                    <th>إدارة البحوث (RGMS)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>SYSTEM_ADMIN</code></td>
+                    <td>الوصول الكامل</td>
+                    <td>الوصول الكامل</td>
+                    <td>قراءة فقط</td>
+                    <td>الوصول الكامل</td>
+                </tr>
+                <tr>
+                    <td><code>REGISTRAR</code></td>
+                    <td>الوصول الكامل</td>
+                    <td>محجوب</td>
+                    <td>محجوب</td>
+                    <td>محجوب بالكامل (ممنوع من الدخول)</td>
+                </tr>
+                <tr>
+                    <td><code>HR_STAFF</code></td>
+                    <td>محجوب</td>
+                    <td>الوصول الكامل</td>
+                    <td>محجوب</td>
+                    <td>محجوب بالكامل (ممنوع من الدخول)</td>
+                </tr>
+                <tr>
+                    <td><code>AUDITOR</code></td>
+                    <td>قراءة فقط</td>
+                    <td>قراءة فقط</td>
+                    <td>قراءة فقط</td>
+                    <td>قراءة فقط لمراجعة الميزانيات</td>
+                </tr>
+                <tr>
+                    <td><code>FACULTY</code></td>
+                    <td>قراءة الملف الشخصي</td>
+                    <td>قراءة الملف الشخصي</td>
+                    <td>محجوب</td>
+                    <td>إضافة وإدارة مجموعاته البحثية الخاصة</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ===================================================
+             الفصل الخامس: سجلات التدقيق
+             =================================================== -->
+        <h1 class="section-title" id="sec-audits">5. حماية سجلات التدقيق ومنع التلاعب (Audit Immutability)</h1>
+        <p>تعتبر سجلات التدقيق الأمني (Audit Logs) جوهر الرقابة والنزاهة في المنظومة، ولهذا تم تطبيق مفهوم **عدم القابلية للتغيير أو الحذف (Immutability)**.</p>
+        
+        <h2 class="subsection-title">5.1 حماية قاعدة البيانات عبر الـ Database Triggers</h2>
+        <p>لمنع أي محاولة لتغيير أو مسح السجلات، تم حقن Trigger برمجي في محرك قاعدة البيانات يطلق استثناءً يمنع أي عملية تعديل أو حذف:</p>
+        <pre>
+CREATE TRIGGER prevent_audit_log_updates
+BEFORE UPDATE ON audit_logs
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'سجلات التدقيق الأمني غير قابلة للتعديل نهائياً.';
+END;
+
+CREATE TRIGGER prevent_audit_log_deletes
+BEFORE DELETE ON audit_logs
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'سجلات التدقيق الأمني غير قابلة للحذف نهائياً.';
+END;
+        </pre>
+
+        <!-- ===================================================
+             الفصل السادس: واجهات البرمجة
+             =================================================== -->
+        <h1 class="section-title" id="sec-apis">6. مواصفات واجهات برمجة التطبيقات (API Specifications)</h1>
+        <p>تتم التفاعلات والمشاركة الخارجية للبيانات من خلال واجهات RESTful APIs قياسية.</p>
+
+        <h2 class="subsection-title">6.1 جلب المجموعات البحثية (Get Research Groups)</h2>
+        <p>رابط استرجاع كافة المجموعات البحثية النشطة بصيغة JSON:</p>
+        <pre>
+GET /api/v1/rgms/research-groups
+Authorization: Bearer [Sanctum_Token]
+Accept: application/json
+        </pre>
+        <p>نموذج الاستجابة المتوقعة (Response JSON):</p>
+        <pre>
+{
+    "success": true,
+    "data": [
+        {
+            "id": "e2808c10-23a9-4b6e-8201-44abf01201aa",
+            "code": "AI-RG-01",
+            "name_ar": "مجموعة أبحاث الذكاء الاصطناعي",
+            "name_en": "Artificial Intelligence Research Group",
+            "primary_discipline": "Computer Science"
+        }
+    ]
+}
+        </pre>
+
+        <!-- ===================================================
+             الفصل السابع: دليل التشغيل
+             =================================================== -->
+        <h1 class="section-title" id="sec-deployment">7. دليل التنصيب والتشغيل السريع (User Guide)</h1>
+        <p>لتشغيل النظامين معاً على جهاز كمبيوتر جديد، اتبع الخطوات الهندسية التالية:</p>
+
+        <h2 class="subsection-title">7.1 تشغيل النظامين بنقرة واحدة</h2>
+        <p>قم بفتح المجلد الرئيسي للمشروع <code>C:\UIMP-RGMS</code> واضغط مرتين على الملف <code>start-all.bat</code>. سيقوم هذا الملف البرمجي بتشغيل الأوامر التالية تلقائياً:</p>
+        <pre>
+@echo off
+# تشغيل سيرفر نظام الجامعة الأساسي على منفذ 8000
+start "UIMP Core" /D "uimp-core" php artisan serve --host=127.0.0.1 --port=8000
+
+# تشغيل سيرفر نظام البحوث الفرعي على منفذ 8001
+start "RGMS Subsystem" /D "rgms-subsystem" php artisan serve --host=127.0.0.1 --port=8001
+        </pre>
+        <p>اترك النوافذ السوداء مفتوحة لتستمر السيرفرات في معالجة طلبات المتصفح بنجاح.</p>
+    </div>
+
+</body>
+</html>
