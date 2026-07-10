@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UIMP + RGMS — Sign In</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>تسجيل الدخول - منصة الجامعة الموحدة / Sign In - UIMP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -200,12 +200,13 @@
 <div class="auth-container">
     <div class="auth-card">
         <div class="logo-area">
-            <h2>🏛️ UIMP + RGMS</h2>
-            <p>Unified University & Research Platform</p>
+            <h2 style="font-family:'Cairo', sans-serif; font-size:1.6rem; font-weight:800;">🏛️ UIMP Core</h2>
+            <p style="font-family:'Cairo', sans-serif; margin-top:0.3rem;">منصة الجامعة الموحدة</p>
+            <p style="font-size:0.75rem; opacity:0.7;">Core University Information Platform</p>
         </div>
 
         @if($errors->any())
-            <div class="alert-error">
+            <div class="alert-error" style="direction:rtl; text-align:right; font-family:'Cairo', sans-serif;">
                 ⚠️ {{ $errors->first() }}
             </div>
         @endif
@@ -213,27 +214,38 @@
         <form action="/login" method="POST">
             @csrf
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" style="display:flex; justify-content:space-between; font-family:'Cairo', sans-serif; font-size:0.75rem;">
+                    <span>اسم المستخدم</span>
+                    <span>Username</span>
+                </label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" value="{{ old('username') }}" required autofocus>
+                    <input type="text" id="username" name="username" class="form-input" placeholder="Enter username / أدخل اسم المستخدم" value="{{ old('username') }}" required autofocus>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" style="display:flex; justify-content:space-between; font-family:'Cairo', sans-serif; font-size:0.75rem;">
+                    <span>كلمة المرور</span>
+                    <span>Password</span>
+                </label>
                 <div class="input-wrapper">
                     <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Sign In</button>
+            <button type="submit" class="btn-submit" style="font-family:'Cairo', sans-serif; font-weight:700;">تسجيل الدخول / Sign In</button>
         </form>
 
-        <details class="credentials-helper">
-            <summary>Key Demo Accounts (Password: <code>password</code>)</summary>
-            <ul class="credentials-list">
+        <details class="credentials-helper" style="direction:rtl; text-align:right; font-family:'Cairo', sans-serif;">
+            <summary style="display:flex; justify-content:space-between; direction:ltr; font-family:'Cairo', sans-serif;">
+                <span style="font-size:0.75rem; opacity:0.8;">(Password: password)</span>
+                <span>🔑 الحسابات التجريبية القياسية</span>
+            </summary>
+            <ul class="credentials-list" style="direction:ltr; font-family:inherit;">
                 <li><span>System Admin:</span> <code>sysadmin</code></li>
                 <li><span>University Admin:</span> <code>uniadmin</code></li>
+                <li><span>Registrar Staff:</span> <code>registrar</code></li>
+                <li><span>HR Staff:</span> <code>hrstaff</code></li>
                 <li><span>Auditor Staff:</span> <code>auditor</code></li>
                 <li><span>Student:</span> <code>student01</code></li>
             </ul>

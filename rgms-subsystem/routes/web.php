@@ -21,6 +21,13 @@ Route::middleware('guest')->group(function () {
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            if ($user->hasAnyRole(['REGISTRAR', 'HR_STAFF']) && !$user->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN'])) {
+                Auth::logout();
+                return back()->withErrors([
+                    'username' => 'غير مصرح لك بالوصول إلى النظام الفرعي للبحوث (RGMS). / Not authorized to access the RGMS Subsystem.',
+                ])->onlyInput('username');
+            }
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
