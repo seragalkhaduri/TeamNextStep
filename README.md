@@ -1,116 +1,79 @@
-# University Integrated Management Platform (UIMP)
+# University Integrated Management Platform & Research groups (UIMP & RGMS)
+## دليل تشغيل المنصة الموحدة لإدارة الجامعة والمجموعات البحثية 🎓🔬
 
-> Core/Parent Platform — Laravel Implementation
+> **مشروع تخرج بنظام معماري منفصل (Decoupled Micro-apps) يجمع بين منصة الجامعة الأساسية UIMP ونظام البحوث الفرعي RGMS متكاملين بقاعدة بيانات مشتركة وتزامن جلسات (SSO).**
 
-## Overview
+---
 
-The University Integrated Management Platform (UIMP) is the core platform for managing shared university data: students, employees, faculties, departments, campuses, buildings, rooms, and users/roles. It exposes versioned REST APIs (`/api/v1/`) so external subsystems can read and write shared data without duplication.
+## 📌 الإرشادات الأساسية للتشغيل والتنصيب (الرجاء القراءة أولاً)
 
-## Stack
+لتشغيل المشروع بنجاح على أي جهاز وتفادي التعارضات (Conflicts)، يجب الانتباه للنقاط الهندسية التالية:
 
-| Component | Technology |
-|---|---|
-| Backend | Laravel 13.x, PHP 8.5+ |
-| Frontend | Blade + Livewire 3 + Tailwind CSS |
-| Database | PostgreSQL 15 |
-| Cache/Queue | Redis |
-| Auth | Laravel Sanctum (15-min tokens + custom 7-day refresh) |
-| RBAC | spatie/laravel-permission |
-| PDF Reports | barryvdh/laravel-dompdf |
-| Excel Reports | openspout/openspout |
-| API Docs | knuckleswtf/scribe |
+### 1️⃣ تهيئة ملفات البيئة (.env Setup) - *مهم جداً*
+المشروع عبارة عن تطبيقين منفصلين يعملان معاً. لكي يتمكن كل نظام من العمل والاتصال، **يجب إنشاء ملف `.env` منفصل لكل منهما**:
+* اذهب لمجلد النظام الأساسي `uimp-core` وقم بنسخ ملف `.env.example` وتسمية النسخة الجديدة بـ **`.env`**.
+* اذهب لمجلد النظام الفرعي `rgms-subsystem` وقم بنسخ ملف `.env.example` وتسمية النسخة الجديدة بـ **`.env`**.
 
-## Architecture
+*(تم ضبط ملفات `.env.example` افتراضياً لتعمل فوراً على قاعدة بيانات SQLite المدمجة لتوفير الوقت).*
 
-Domain-oriented structure under `app/Domain/`:
+### 2️⃣ قيود منافذ التشغيل (Port Configuration Constraint)
+لكي يعمل الربط المشترك، وروابط التحويل بين النظامين، ومشاركة جلسات تسجيل الدخول (SSO) بشكل صحيح، **يجب التقيّد بمنافذ التشغيل المخصصة**:
+* **النظام الأساسي (UIMP Core):** يجب أن يشتغل على المنفذ **`8000`** -> [http://127.0.0.1:8000](http://127.0.0.1:8000)
+* **النظام الفرعي (RGMS Subsystem):** يجب أن يشتغل على المنفذ **`8001`** -> [http://127.0.0.1:8001](http://127.0.0.1:8001)
 
-```
-app/Domain/
-├── Auth/          # Users, roles, login, lockout, password reset
-├── Students/      # Student records, enrollment, dedup
-├── Employees/     # Staff records, academic rank, department assignment
-├── Organization/  # Faculties, departments, programs
-├── Facilities/    # Campuses, buildings, rooms
-├── Subsystems/    # External subsystem registration, API keys, webhooks
-├── Audit/         # Immutable audit logs, compliance
-└── Notifications/ # Email, SMS, in-app notifications
-```
+> 💡 **ملاحظة:** ملف التشغيل السريع **`start-all.bat`** الموجود في المجلد الرئيسي يقوم أوتوماتيكياً بتشغيل الخادمين وربطهما بالمنافذ الصحيحة (`8000` و `8001`) وتوجيههما لقاعدة البيانات المشتركة بضغطة زر واحدة.
 
-Each domain contains: `Models/`, `Services/`, `Policies/`, `Requests/`, `Resources/`, `Events/`, `Listeners/`.
+---
 
-## RBAC Roles (SDD §3.1)
+## 🛠️ خطوات التشغيل السريع بـ 3 خطوات (Quick Start - SQLite)
 
-Hierarchy: `SYSTEM_ADMIN > UNIVERSITY_ADMIN > DEPARTMENT_ADMIN > REGISTRAR_STAFF > HR_STAFF > ACADEMIC_STAFF > STUDENT > EMPLOYEE`
+تم دمج قاعدة بيانات مسبقة التغذية وممتلئة بالبيانات والحسابات تجنباً لكتابة أي أوامر في الـ Terminal:
 
-Cross-cutting: `AUDITOR` (read-only), `SUBSYSTEM_DEVELOPER` (API access only)
+1. **نسخ ملفات الإعدادات:**
+   قم بنسخ ملف `.env.example` وتسميته `.env` في المجلدين `uimp-core` و `rgms-subsystem`.
+2. **تشغيل الخوادم بضغطة زر:**
+   قم بالنقر المزدوج على ملف التشغيل **`start-all.bat`** في المجلد الرئيسي.
+3. **فتح المتصفح:**
+   افتح الرابط **[http://127.0.0.1:8000](http://127.0.0.1:8000)** وسجل الدخول بالحساب الافتراضي:
+   * **اسم المستخدم:** `sysadmin`
+   * **كلمة المرور:** `password`
 
-## Setup
+---
 
-### Prerequisites
+## 🔑 بيانات الحسابات التجريبية (Demo Credentials)
 
-- PHP 8.3+ with extensions: `pdo_pgsql`, `redis`, `mbstring`, `openssl`, `xml`
-- PostgreSQL 15+
-- Redis 7+
-- Composer
+| اسم المستخدم (Username) | كلمة المرور (Password) | الرتبة والصلاحية (Role) | الدخول لنظام البحوث (8001) |
+|---|---|---|---|
+| `sysadmin` | `password` | المسؤول العام للنظام | مسموح بالكامل |
+| `uniadmin` | `password` | إدارة الجامعة العليا | مسموح بالكامل |
+| `faculty01` | `password` | الأستاذ الباحث (PI) | مسموح (إدارة أبحاثه) |
+| `student01` | `password` | طالب باحث | مسموح (تصفح وحجز مختبرات) |
+| `registrar` | `password` | مسجل القبول والتسجيل | 🚫 محجوب أمنياً بالكامل |
+| `hrstaff` | `password` | موظف الموارد البشرية | 🚫 محجوب أمنياً بالكامل |
 
-### Installation
+---
 
-```bash
-# Clone and install dependencies
-composer install
+## ⚙️ خيار التشغيل على خادم MySQL / XAMPP
+إذا كنت تفضل تشغيل المشروع على خادم قاعدة بيانات MySQL محلي بدلاً من SQLite المدمج:
+1. قم بإنشاء قاعدة بيانات فارغة في phpMyAdmin وتسميتها `uimp_rgms`.
+2. قم بتعديل سطر الاتصال في ملفات الـ `.env` للمشروعين كالتالي:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=uimp_rgms
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+3. افتح الـ Terminal داخل مجلد `uimp-core` ونفذ الأمر لبناء الجداول وتغذية الحسابات:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
 
-# Copy environment file
-cp .env.example .env
-php artisan key:generate
+---
 
-# Create the PostgreSQL database
-createdb uimp
+## English Quick Instructions
 
-# Run migrations and seed roles
-php artisan migrate
-php artisan db:seed
-
-# Start the development server
-php artisan serve
-```
-
-### Environment Variables
-
-See `.env.example` for all configuration options. Key UIMP-specific settings:
-
-| Variable | Default | Description |
-|---|---|---|
-| `SANCTUM_TOKEN_EXPIRATION` | `15` | API access token lifetime (minutes) |
-| `UIMP_REFRESH_TOKEN_DAYS` | `7` | Refresh token lifetime (days) |
-| `UIMP_LOCKOUT_ATTEMPTS` | `5` | Failed login attempts before lockout |
-| `UIMP_LOCKOUT_WINDOW_MINUTES` | `15` | Window for counting failed attempts |
-| `UIMP_LOCKOUT_DURATION_MINUTES` | `15` | Duration of account lockout |
-| `UIMP_PASSWORD_RESET_EXPIRY_MINUTES` | `60` | Password reset token lifetime |
-
-## API Documentation
-
-After setup, generate API docs:
-
-```bash
-php artisan scribe:generate
-```
-
-Docs will be available at `/docs`.
-
-## Security
-
-- **Bcrypt cost 12** for password hashing
-- **15-minute** API access token expiry
-- **30-minute** web session inactivity timeout
-- **Account lockout** after 5 failed attempts
-- **Audit logging** on every write operation (immutable, append-only)
-- **Security headers**: CSP, X-Frame-Options DENY, nosniff, XSS protection
-- **Soft deletes only** — hard deletion is never exposed
-
-## Bilingual Support (SDD §4.5)
-
-All user-visible entities store both `name_en` and `name_ar` (NOT NULL). API responses include both fields and select localized `name` based on `Accept-Language` header or user's `preferred_language`. Arabic text is NFC-normalized before persistence.
-
-## License
-
-Proprietary — University of [TBD]
+1. **Copy Environments:** Copy `.env.example` to `.env` in both folders (`uimp-core` and `rgms-subsystem`).
+2. **Launch Servers:** Double-click **`start-all.bat`** at the root. It spins up both applications on ports `8000` (Core) and `8001` (Subsystem) using a shared SQLite database with zero terminal commands needed.
+3. **Open Browser:** Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) and log in using username `sysadmin` and password `password`.
