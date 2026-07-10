@@ -59,6 +59,31 @@ Route::middleware('auth')->group(function () {
         return redirect('/')->with('active_section', 'audit-logs');
     });
 
+    // Create User Endpoint
+    Route::post('/users/create', function (Request $request) {
+        if (!auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->validate([
+            'username' => ['required', 'string', 'unique:users,username', 'min:3', 'max:50'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'role' => ['required', 'string', 'in:SYSTEM_ADMIN,UNIVERSITY_ADMIN,REGISTRAR,HR_STAFF,AUDITOR,FACULTY,STUDENT'],
+        ]);
+
+        $newUser = \App\Domain\Auth\Models\User::create([
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password_hash' => \Illuminate\Support\Facades\Hash::make($data['password']),
+            'is_active' => true,
+        ]);
+
+        $newUser->assignRole($data['role']);
+
+        return redirect('/')->with('active_section', 'users-management');
+    });
+
     // ── Students CRUD ───────────────────────────────────────────
     Route::post('/students/create', function (Request $request, StudentService $studentService) {
         $data = $request->validate([

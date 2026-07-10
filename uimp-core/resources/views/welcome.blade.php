@@ -1765,6 +1765,56 @@
         <!-- ══ USERS MANAGEMENT ══ -->
         @if(auth()->user()->hasAnyRole(['SYSTEM_ADMIN', 'UNIVERSITY_ADMIN']))
         <div id="section-users-management" class="page-section">
+            
+            <!-- Create User Card -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">👤 {{ $t('Create New User Account', 'إنشاء حساب مستخدم جديد') }}</div>
+                        <div class="card-subtitle">{{ $t('Create new user credentials and assign their system role', 'إضافة حساب جديد وتحديد رتبته وصلاحياته الأمنية على النظام') }}</div>
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    <form action="/users/create" method="POST" class="form-grid">
+                        @csrf
+                        <div class="form-group">
+                            <label class="form-label" style="font-family:'Cairo', sans-serif; font-size:0.85rem; font-weight:600;">{{ $t('Username', 'اسم المستخدم') }} <span style="color:var(--accent-4)">*</span></label>
+                            <input type="text" name="username" class="form-input" placeholder="{{ $t('e.g., student02', 'مثال: student02') }}" required style="width: 100%;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" style="font-family:'Cairo', sans-serif; font-size:0.85rem; font-weight:600;">{{ $t('Email Address', 'البريد الإلكتروني') }} <span style="color:var(--accent-4)">*</span></label>
+                            <input type="email" name="email" class="form-input" placeholder="user@uimp.edu.ly" required style="width: 100%;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" style="font-family:'Cairo', sans-serif; font-size:0.85rem; font-weight:600;">{{ $t('Password', 'كلمة المرور') }} <span style="color:var(--accent-4)">*</span></label>
+                            <input type="password" name="password" class="form-input" placeholder="••••••••" required style="width: 100%;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" style="font-family:'Cairo', sans-serif; font-size:0.85rem; font-weight:600;">{{ $t('System Role', 'الصلاحية / الرتبة') }} <span style="color:var(--accent-4)">*</span></label>
+                            <select name="role" class="form-select" required style="width: 100%;">
+                                <option value="STUDENT">STUDENT / طالب باحث</option>
+                                <option value="FACULTY">FACULTY / عضو هيئة تدريس</option>
+                                <option value="REGISTRAR">REGISTRAR / مسجل الكلية</option>
+                                <option value="HR_STAFF">HR_STAFF / الموارد البشرية</option>
+                                <option value="AUDITOR">AUDITOR / مدقق النظام</option>
+                                <option value="UNIVERSITY_ADMIN">UNIVERSITY_ADMIN / رئيس الجامعة</option>
+                                <option value="SYSTEM_ADMIN">SYSTEM_ADMIN / المسؤول العام</option>
+                            </select>
+                        </div>
+
+                        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="font-family:'Cairo', sans-serif; font-weight: 700;">
+                                ➕ {{ $t('Create Account', 'إنشاء الحساب') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Existing Users List Card -->
             <div class="card">
                 <div class="card-header">
                     <div>
